@@ -94,6 +94,28 @@ def energy_in_cars(mag):
     return f"{round(cars, -2):,.0f}"
 
 
+def how_long(mag):
+    """
+    How long did the earthquake last? (Devan's idea!)
+    An earthquake is a crack in the rock that slips. Bigger quakes have
+    bigger cracks, so they take longer to finish slipping.
+    Scientists' rule of thumb: every +2 magnitude = about 10 TIMES longer.
+      M1.5 -> about 0.02 seconds     M3 -> about 0.1 seconds
+      M4   -> about half a second    M6 -> about 4 seconds
+      M9 (the giant "Cascadia" quake) -> about 2 minutes!
+    """
+    seconds = 10 ** (0.5 * mag - 2.4)
+    if seconds < 0.3:
+        return f"about {seconds:.2f} seconds. Faster than a blink!"
+    if seconds < 1:
+        return f"about {seconds:.1f} seconds. About one blink"
+    if seconds < 1.5:
+        return "about 1 second"
+    if seconds < 60:
+        return f"about {seconds:.0f} seconds"
+    return f"about {seconds / 60:.0f} minutes"
+
+
 def fetch_quakes():
     """Ask USGS for recent earthquakes near Seattle."""
     if FIXTURE:
@@ -131,6 +153,7 @@ def describe(quake):
         f"📍 {p.get('place') or 'Near Seattle'}",
         f"📏 {miles:.0f} miles from {CENTER_NAME}, {depth_mi:.0f} miles underground",
         f"🕒 {when_text}",
+        f"⏱️ The fault slipped for {how_long(mag)}",
         f"🚗 Energy: like {energy_in_cars(mag)} cars going 65 mph",
     ]
     if p.get("felt"):
